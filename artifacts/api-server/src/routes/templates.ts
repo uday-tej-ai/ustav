@@ -8,7 +8,7 @@ import {
   DeleteTemplateParams,
   ListTemplatesQueryParams,
 } from "@workspace/api-zod";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
@@ -62,7 +62,7 @@ router.get("/templates", async (req, res): Promise<void> => {
   }
 
   const rows = conditions.length > 0
-    ? await query.where(conditions.length === 1 ? conditions[0] : conditions.reduce((a, b) => a && b))
+    ? await query.where(conditions.length === 1 ? conditions[0] : and(...conditions))
     : await query;
 
   res.json(rows.map((t) => ({
