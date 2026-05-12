@@ -73,7 +73,7 @@ export default function AdminLogin() {
                   <FormItem>
                     <FormLabel>Admin Email</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-email" type="email" placeholder="admin@example.com" {...field} />
+                      <Input data-testid="input-email" type="email" autoComplete="email" placeholder="admin@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,7 +87,7 @@ export default function AdminLogin() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-password" type="password" placeholder="Enter your password" {...field} />
+                      <Input data-testid="input-password" type="password" autoComplete="current-password" placeholder="Enter your password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

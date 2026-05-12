@@ -100,7 +100,7 @@ export default function CustomerRegister() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-email" type="email" placeholder="you@example.com" {...field} />
+                      <Input data-testid="input-email" type="email" autoComplete="email" placeholder="you@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -114,7 +114,7 @@ export default function CustomerRegister() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-password" type="password" placeholder="At least 6 characters" {...field} />
+                      <Input data-testid="input-password" type="password" autoComplete="new-password" placeholder="At least 6 characters" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

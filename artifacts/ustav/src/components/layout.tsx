@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useGetMe, useLogout } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,17 @@ export function RequireAuth({
   const [, setLocation] = useLocation();
   const { data: user, isLoading } = useGetMe();
 
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      setLocation(role === "admin" ? "/admin/login" : "/customer/login");
+      return;
+    }
+    if (role && user.role !== role) {
+      setLocation(user.role === "admin" ? "/admin/dashboard" : "/customer/dashboard");
+    }
+  }, [user, isLoading, role, setLocation]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -23,17 +34,27 @@ export function RequireAuth({
     );
   }
 
-  if (!user) {
-    setLocation(role === "admin" ? "/admin/login" : "/customer/login");
-    return null;
-  }
-
-  if (role && user.role !== role) {
-    setLocation(user.role === "admin" ? "/admin/dashboard" : "/customer/dashboard");
-    return null;
-  }
+  if (!user) return null;
+  if (role && user.role !== role) return null;
 
   return <>{children}</>;
+}
+
+function NavLink({ href, children }: { href: string; children: ReactNode }) {
+  const [location] = useLocation();
+  const isActive = location === href || location.startsWith(href + "/");
+  return (
+    <Link
+      href={href}
+      className={`text-sm font-medium transition-colors ${
+        isActive
+          ? "text-primary border-b-2 border-primary pb-0.5"
+          : "text-foreground/70 hover:text-primary"
+      }`}
+    >
+      {children}
+    </Link>
+  );
 }
 
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -52,48 +73,48 @@ export function AppLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground">
-      <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-serif font-bold text-primary">
+    <div className="min-h-screen bg-background font-sans text-foreground flex flex-col">
+      <header className="border-b border-border bg-card sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="text-2xl font-serif font-bold text-primary tracking-tight">
             USTAV
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-6">
             {user ? (
               <>
                 {user.role === "admin" ? (
                   <>
-                    <Link href="/admin/dashboard" className="text-sm font-medium hover:text-primary">Dashboard</Link>
-                    <Link href="/admin/categories" className="text-sm font-medium hover:text-primary">Categories</Link>
-                    <Link href="/admin/templates" className="text-sm font-medium hover:text-primary">Templates</Link>
-                    <Link href="/admin/orders" className="text-sm font-medium hover:text-primary">Orders</Link>
+                    <NavLink href="/admin/dashboard">Dashboard</NavLink>
+                    <NavLink href="/admin/categories">Categories</NavLink>
+                    <NavLink href="/admin/templates">Templates</NavLink>
+                    <NavLink href="/admin/orders">Orders</NavLink>
                   </>
                 ) : (
                   <>
-                    <Link href="/customer/dashboard" className="text-sm font-medium hover:text-primary">Home</Link>
-                    <Link href="/customer/orders" className="text-sm font-medium hover:text-primary">My Orders</Link>
+                    <NavLink href="/customer/dashboard">Browse</NavLink>
+                    <NavLink href="/customer/orders">My Orders</NavLink>
                   </>
                 )}
-                <Button variant="outline" onClick={handleLogout} disabled={logoutMutation.isPending}>
-                  {logoutMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                <Button variant="outline" size="sm" onClick={handleLogout} disabled={logoutMutation.isPending}>
+                  {logoutMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
                   Logout
                 </Button>
               </>
             ) : (
               <>
-                <Link href="/customer/login" className="text-sm font-medium hover:text-primary">Customer Login</Link>
-                <Link href="/admin/login" className="text-sm font-medium hover:text-primary">Admin Login</Link>
+                <NavLink href="/customer/login">Customer Login</NavLink>
+                <NavLink href="/admin/login">Admin Login</NavLink>
               </>
             )}
           </nav>
         </div>
       </header>
-      <main className="container mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto w-full px-6 py-8 flex-1">
         {children}
       </main>
-      <footer className="border-t border-border bg-card mt-auto py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground font-serif">
-          <p>© {new Date().getFullYear()} USTAV. Celebrating traditions.</p>
+      <footer className="border-t border-border bg-card py-6 mt-auto">
+        <div className="max-w-7xl mx-auto px-6 text-center text-muted-foreground text-sm font-serif">
+          © {new Date().getFullYear()} USTAV. Celebrating traditions.
         </div>
       </footer>
     </div>

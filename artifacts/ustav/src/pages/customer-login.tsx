@@ -70,7 +70,7 @@ export default function CustomerLogin() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-email" type="email" placeholder="you@example.com" {...field} />
+                      <Input data-testid="input-email" type="email" autoComplete="email" placeholder="you@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -84,7 +84,7 @@ export default function CustomerLogin() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input data-testid="input-password" type="password" placeholder="Enter your password" {...field} />
+                      <Input data-testid="input-password" type="password" autoComplete="current-password" placeholder="Enter your password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
